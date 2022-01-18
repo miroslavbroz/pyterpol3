@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gs
 import numpy as np
 from scipy.stats import norm
-from pyterpol.synthetic.auxiliary import read_text_file
+
+from pyterpol3.synthetic.auxiliary import read_text_file
 
 
 def get_walker(db, nchain, nwalker, niter):
@@ -294,7 +295,7 @@ def read_fitlog(f):
             if l.find(hk) > -1:
                 # groups are integers of course
                 if hk == 'group':
-                    d[2:] = map(int, d[2:])
+                    d[2:] = list(map(int, d[2:]))
                 else:
                     d[2:] = d[2:]
 
@@ -336,7 +337,7 @@ def read_mc_chain(f):
             if l.find(hk) > -1:
                 # groups are integers of course
                 if hk == 'group':
-                    d[2:] = map(int, d[2:])
+                    d[2:] = list(map(int, d[2:]))
                 else:
                     d[2:] = d[2:]
 

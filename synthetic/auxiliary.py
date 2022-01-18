@@ -7,7 +7,6 @@ from scipy.interpolate import bisplrep
 from scipy.interpolate import bisplev
 from scipy.interpolate import RectBivariateSpline
 from scipy.interpolate import InterpolatedUnivariateSpline
-from scipy.interpolate import spline
 from scipy.signal import fftconvolve
 
 ZERO_TOLERANCE = 1e-6
@@ -226,7 +225,7 @@ def keys_to_lowercase(d):
     """
 
     dnew = {}
-    for key in d.keys():
+    for key in list(d.keys()):
         keynew = key.lower()
         dnew[keynew] = d[key]
 
@@ -257,7 +256,7 @@ def sum_dict_keys(d):
     :return: s the sum
     """
     s = 0.0
-    for key in d.keys():
+    for key in list(d.keys()):
         s += d[key]
     return s
 
@@ -377,7 +376,7 @@ def select_index_for_multiple_keywords(d, **kwargs):
     :param kwargs:
     :return:
     """
-    keys = d.keys()
+    keys = list(d.keys())
     length = len(d[keys[0]])
 
     for i in range(0, length):

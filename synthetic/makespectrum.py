@@ -5,22 +5,23 @@ import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.constants import c
-from auxiliary import is_within_interval
-from auxiliary import instrumental_broadening
-from auxiliary import interpolate_spec
-from auxiliary import interpolate_block_faster
-from auxiliary import read_text_file
-from auxiliary import rotate_spectrum
-from auxiliary import shift_spectrum
-from auxiliary import ZERO_TOLERANCE
-from defaults import default_grid_order
-from defaults import gridDirectory
-from defaults import grid_files
-from defaults import gridListFile
-from defaults import ABS_default_grid_order
-from defaults import ABS_gridDirectory
-from defaults import ABS_grid_files
-from defaults import ABS_gridListFile
+
+from .auxiliary import is_within_interval
+from .auxiliary import instrumental_broadening
+from .auxiliary import interpolate_spec
+from .auxiliary import interpolate_block_faster
+from .auxiliary import read_text_file
+from .auxiliary import rotate_spectrum
+from .auxiliary import shift_spectrum
+from .auxiliary import ZERO_TOLERANCE
+from .defaults import default_grid_order
+from .defaults import gridDirectory
+from .defaults import grid_files
+from .defaults import gridListFile
+from .defaults import ABS_default_grid_order
+from .defaults import ABS_gridDirectory
+from .defaults import ABS_grid_files
+from .defaults import ABS_gridListFile
 
 # CONSTANTS
 
@@ -58,7 +59,7 @@ class SyntheticSpectrum:
 
         # setups properties of the synthetic spectrum
         self.properties = []
-        for key in props.keys():
+        for key in list(props.keys()):
             setattr(self, key.lower(), props[key])
             self.properties.append(key.lower())
 
@@ -157,7 +158,7 @@ class SyntheticSpectrum:
         # otherwise, load ascii (very slow!) and save it as binary
         else:
             self.wave, self.intens = np.loadtxt(self.filename, unpack=True, usecols=[0, 1])
-            print("Saving binary file: " + str(binary_file))
+            print(("Saving binary file: " + str(binary_file)))
             np.savez(binary_file, self.wave, self.intens)
 
         # measures the spectrum and marks it as loaded
@@ -560,7 +561,7 @@ class SyntheticGrid:
 
         l = np.array(l)
         # print np.shape(l)[-1]
-        keys = props.keys()
+        keys = list(props.keys())
 
         # go column by column
         for i in range(0, np.shape(l)[-1]):
@@ -626,7 +627,7 @@ class SyntheticGrid:
             kwargs.. a dictionary of property = value
         """
         # just in case we got empty dictionary
-        if len(kwargs.keys()) == 0:
+        if len(list(kwargs.keys())) == 0:
             return self.SyntheticSpectraList.copy()
 
         # goes through each stored synthetic spectrum
@@ -637,11 +638,11 @@ class SyntheticGrid:
                 # print rec[key]
                 # print kwargs[key]
                 # keys agrees
-                if key.lower() in rec.keys():
+                if key.lower() in list(rec.keys()):
                     # values are the same
                     if (abs(kwargs[key] - rec[key.lower()]) < ZERO_TOLERANCE):
                         # and we are checking the last record
-                        if i == (len(kwargs.keys()) - 1):
+                        if i == (len(list(kwargs.keys())) - 1):
                             spectra.append(rec)
                     else:
                         break
@@ -660,7 +661,7 @@ class SyntheticGrid:
              down list
         """
         # lets say we want to contraint the grid
-        if len(constraints.keys()) == 0:
+        if len(list(constraints.keys())) == 0:
             grid = self.SyntheticSpectraList
         else:
             grid = self.get_all(**constraints)
@@ -669,7 +670,7 @@ class SyntheticGrid:
         values = []
         prop = prop.lower()
         for rec in grid:
-            if prop in rec.keys() and rec[prop] not in values:
+            if prop in list(rec.keys()) and rec[prop] not in values:
                 values.append(rec[prop])
 
         return np.sort(values)
@@ -682,7 +683,7 @@ class SyntheticGrid:
         parLis = np.array(self.parameterList)
         # print parLis
 
-        for key in constraints.keys():
+        for key in list(constraints.keys()):
             # value
             v = constraints[key]
 
@@ -739,9 +740,9 @@ class SyntheticGrid:
             # check that spectrum is loaded and that its  fitting within boundaries
             if (not spectrum.loaded):
                 if self.debug:
-                    print "Loading spectrum: %s" % (str(spectrum).rstrip('\n'))
+                    print("Loading spectrum: %s" % (str(spectrum).rstrip('\n')))
                 else:
-                    print "Loading spectrum: %s" % (str(spectrum).rstrip('\n'))
+                    print("Loading spectrum: %s" % (str(spectrum).rstrip('\n')))
 
                 # loads the spectrum
                 spectrum.load_spectrum()
@@ -749,7 +750,7 @@ class SyntheticGrid:
                 # truncates the loaded spectrum
                 if truncateSpectrum:
                     if self.debug:
-                        print "Truncating spectrum to: (%f,%f)" % (wmin, wmax)
+                        print("Truncating spectrum to: (%f,%f)" % (wmin, wmax))
                     spectrum.truncate_spectrum(wmin, wmax)
             else:
                 # check that the synthetic spectrum has sufficient size
@@ -760,24 +761,25 @@ class SyntheticGrid:
                     # truncates the re-loaded spectrum
                     if truncateSpectrum:
                         if self.debug:
-                            print "Truncating spectrum to: (%f,%f)" % (wmin, wmax)
+                            print("Truncating spectrum to: (%f,%f)" % (wmin, wmax))
                         spectrum.truncate_spectrum(wmin, wmax)
 
                 if self.debug:
-                    print "Spectrum loaded: %s" % (str(spectrum).rstrip('\n'))
+                    print("Spectrum loaded: %s" % (str(spectrum).rstrip('\n')))
 
             # We have to be sure that the spectra aren't off
             # each other by less than one step
             swmin, swmax, sstep = spectrum.get_size()
             if np.any(np.abs([swmin - wmin, swmax - wmax, sstep - step]) > ZERO_TOLERANCE):
                 if self.debug:
-                    print "Spectrum %s does not have the wavelength scale (wmin, wmax,step)=(%s, %s, %s)" % \
-                          (str(spectrum).rstrip('\n'), str(wmin), str(wmax), str(step))
+                    print("Spectrum %s does not have the wavelength scale (wmin, wmax,step)=(%s, %s, %s)" % \
+                          (str(spectrum).rstrip('\n'), str(wmin), str(wmax), str(step)))
 
                 # if they do not agree - we have to interpolate
                 # it is cruacial that all spectra have the same
                 # wavelength scale
-                if self.wave == None:
+                # print "self.wave = ", self.wave
+                if self.wave.any() == None:
                     wave = np.arange(wmin, wmax + step / 2., step)
                 else:
                     wave = self.wave
@@ -787,8 +789,8 @@ class SyntheticGrid:
 
             else:
                 if self.debug:
-                    print "Wavelenght scale of spectrum: %s is (wmin, wmax,step)=(%s, %s, %s)." % \
-                          (str(spectrum).rstrip('\n'), str(wmin), str(wmax), str(step))
+                    print("Wavelenght scale of spectrum: %s is (wmin, wmax,step)=(%s, %s, %s)." % \
+                          (str(spectrum).rstrip('\n'), str(wmin), str(wmax), str(step)))
                 # read out the intensities
                 intens = spectrum.get_spectrum(only_intensity=True)
 
@@ -848,8 +850,8 @@ class SyntheticGrid:
                 if len(t_plist) == 1:
 
                     if self.debug:
-                        print "Skipping interpolation in %s - there is only one spectrum for values %s." % \
-                              (str(xnew), str(t_plist[:, :ncol - 1]))
+                        print("Skipping interpolation in %s - there is only one spectrum for values %s." % \
+                              (str(xnew), str(t_plist[:, :ncol - 1])))
 
                     intens = t_syns[0]
                     new_plist.append(row[:ncol - 1])
@@ -865,7 +867,7 @@ class SyntheticGrid:
                 t_syns = t_syns[ind]
 
                 if self.debug:
-                    print "Interpolating in vector: %s at value %s." % (str(x), xnew)
+                    print("Interpolating in vector: %s at value %s." % (str(x), xnew))
 
                 # everything is sorted, we can interpolate
                 # unless our value is exact ofc.
@@ -917,7 +919,7 @@ class SyntheticGrid:
         # separate fixed from free
         fixed = {}
         free = {}
-        for key in kwargs.keys():
+        for key in list(kwargs.keys()):
             if not isinstance(kwargs[key], (tuple, list)):
                 fixed[key] = kwargs[key]
             else:
@@ -929,17 +931,17 @@ class SyntheticGrid:
         # if there are no other restrictions -
         # this option is covered with get_all
         # method ofc.
-        if len(free.keys()) == 0:
+        if len(list(free.keys())) == 0:
             return grid
         else:
             narrowed_grid = []
             for rec in grid:
                 for i, key in enumerate(free.keys()):
-                    if key.lower() in rec.keys():
+                    if key.lower() in list(rec.keys()):
                         if (rec[key.lower()] >= free[key][0]) & \
                                 (rec[key.lower()] <= free[key][1]):
                             # all keys must agree
-                            if i == len(free.keys()) - 1:
+                            if i == len(list(free.keys())) - 1:
                                 narrowed_grid.append(rec)
 
         # if we narrowed it down to zero
@@ -1053,7 +1055,8 @@ class SyntheticGrid:
             # print speclist[i]['family']
             indices.append(self.gridOrder.index(speclist[i]['family']))
 
-        # justr in case there was something peculiar
+        # just in case there was something peculiar
+        indices = np.array(indices)
         if np.any(indices < -1):
             warnings.warn('At least one grid was not found in the gridOrder variable.'
                           ' Verify that the names set in gridOrder agree with family names of spectra.')
@@ -1083,17 +1086,17 @@ class SyntheticGrid:
 
         # all parameters are defined lowercase
         # so we have to convert it
-        for key in props.keys():
+        for key in list(props.keys()):
             v = props.pop(key)
             props[key.lower()] = v
 
         if self.debug:
-            print "In select_and_verify_parameters: order=%i properties:" % (order)
-            print str(props)
+            print("In select_and_verify_parameters: order=%i properties:" % (order))
+            print(str(props))
 
         # keys and values
-        keys = props.keys()
-        vals = [props[key] for key in props.keys()]
+        keys = list(props.keys())
+        vals = [props[key] for key in list(props.keys())]
 
         # gets the parameter list
         # print order, props
@@ -1107,9 +1110,9 @@ class SyntheticGrid:
             raise Exception('Do %s lie within the grid? I do not think so...' % (str(props)))
 
         if self.debug:
-            print 'Following parameters were chosen with select_parameters method:'
+            print('Following parameters were chosen with select_parameters method:')
             for row in parlist:
-                print row
+                print(row)
 
         # checks the result
         temp = np.array(parlist)
@@ -1140,7 +1143,7 @@ class SyntheticGrid:
 
 
         # extract the parameter and its values
-        key = props.keys()[0].lower()
+        key = list(props.keys())[0].lower()
         v = props.pop(key)
 
         # print key, constraints, props
@@ -1181,11 +1184,11 @@ class SyntheticGrid:
             return values
 
         # if there are no other spectra to interpolate in
-        if len(props.keys()) == 0:
+        if len(list(props.keys())) == 0:
             for i in range(0, len(vals)):
                 row = []
                 # append those that are already fixed
-                for key in constraints.keys():
+                for key in list(constraints.keys()):
                     row.append(constraints[key])
 
                 # append the last parameter

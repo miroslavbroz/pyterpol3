@@ -438,7 +438,7 @@ class ObservedSpectrum:
         :param group a dictionary of pairs parameter + group
         """
         # print group
-        for key in group.keys():
+        for key in list(group.keys()):
             self.group[key.lower()] = group[key]
 
     def set_spectrum_from_arrays(self, wave, intens, error):

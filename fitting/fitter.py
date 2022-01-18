@@ -8,12 +8,13 @@ from scipy.optimize import fmin_slsqp
 try:
     from scipy.optimize import differential_evolution
 except ImportError as ex:
-    print ex
+    print(ex)
     differential_evolution = None
-from pyterpol.synthetic.auxiliary import parlist_to_list
-from pyterpol.synthetic.auxiliary import string2bool
-from pyterpol.synthetic.auxiliary import read_text_file
-from pyterpol.synthetic.auxiliary import renew_file
+
+from pyterpol3.synthetic.auxiliary import parlist_to_list
+from pyterpol3.synthetic.auxiliary import string2bool
+from pyterpol3.synthetic.auxiliary import read_text_file
+from pyterpol3.synthetic.auxiliary import renew_file
 
 fitters = dict(
     sp_nelder_mead=dict(par0type='value',
@@ -118,9 +119,9 @@ class Fitter(object):
 
         # debug
         if self.debug:
-            print "Started fitted with fitting environment: %s\n" \
+            print("Started fitted with fitting environment: %s\n" \
                   " vector of parameters: %s and optional" \
-                  " enviromental parameters: %s." % (self.fittername, str(self.par0), str(self.fit_kwargs))
+                  " enviromental parameters: %s." % (self.fittername, str(self.par0), str(self.fit_kwargs)))
 
         if len(self.par0) == 0:
             raise ValueError('No initial vector of parameters (wrapped in Parameter class) was passed.')
@@ -221,12 +222,12 @@ class Fitter(object):
         self.clear_all()
 
         # check the input
-        if name.lower() not in fitters.keys():
+        if name.lower() not in list(fitters.keys()):
             raise ValueError('Fitter: %s is unknown. Registered fitters are:\n %s.' % (name, self.list_fitters()))
         else:
             self.fitter = fitters[name]['object']
             self.fittername = name
-        for key in kwargs.keys():
+        for key in list(kwargs.keys()):
             if key not in fitters[name]['optional_kwargs']:
                 raise KeyError('The parameter: %s is not listed among '
                                'optional_kwargs for fitter: %s. The eligible'
@@ -235,8 +236,8 @@ class Fitter(object):
                 self.fit_kwargs[key] = kwargs[key]
 
         if self.debug:
-            print 'Choosing environment: %s\n' \
-                  ' environmental parameters: %s.' % (name, str(self.fit_kwargs))
+            print('Choosing environment: %s\n' \
+                  ' environmental parameters: %s.' % (name, str(self.fit_kwargs)))
 
         # if we want to change the fitted parameters
         if fitparams is None:
@@ -253,7 +254,7 @@ class Fitter(object):
             self.par0 = [[vmin, vmax] for vmin, vmax in zip(vmins, vmaxs)]
 
         if self.debug:
-            print 'Setting initial parameters: %s' % str(self.par0)
+            print('Setting initial parameters: %s' % str(self.par0))
 
         # checks that there are any fitting boundaries
         if fitters[name]['uses_bounds']:
@@ -390,7 +391,7 @@ class Fitter(object):
         :return: string : a list of all fitters.
         """
         string = '\n'.rjust(100, '=')
-        for key in fitters.keys():
+        for key in list(fitters.keys()):
             string += "Name: %s\n" % key
             string += "Optional parameters: %s\n" % str(fitters[key]['optional_kwargs'])
             string += "Uses boundaries: %s\n" % str(fitters[key]['uses_bounds'])
@@ -452,7 +453,7 @@ class Fitter(object):
                 recs = ['debug', 'verbose', 'fitlog']
                 cast_types = [string2bool, string2bool, str]
                 cdict = {d[i].rstrip(':'): d[i+1] for i in range(0, len(d), 2)}
-                for k in cdict.keys():
+                for k in list(cdict.keys()):
                     if k in recs:
                         i = recs.index(k)
                         ctype = cast_types[i]
@@ -481,7 +482,7 @@ class Fitter(object):
         :return:
         """
         header = ''
-        for key in self.parameter_identification.keys():
+        for key in list(self.parameter_identification.keys()):
             if key != 'value':
                 header += '# %s: ' % key
                 for rec in self.parameter_identification[key]:
@@ -530,7 +531,7 @@ class Fitter(object):
         """
 
         if self.debug:
-            print "Setting up NLOPT minimizer."
+            print("Setting up NLOPT minimizer.")
 
         # length of the fitted parameters
         n = len(self.fitparams)
@@ -539,7 +540,7 @@ class Fitter(object):
         self.fitter = nlopt.opt(self.nlopt_environment, n)
 
         # setup parameters for fitting terminatio
-        for key in self.fit_kwargs.keys():
+        for key in list(self.fit_kwargs.keys()):
             if key == 'xtol':
                 self.fitter.set_xtol_rel(self.fit_kwargs[key])
             if key == 'ftol':

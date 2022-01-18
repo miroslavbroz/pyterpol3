@@ -9,7 +9,7 @@ def main():
     ps.add_argument('--remove', action='store_true', default=False, help='Removes ascii files.')
     ps.add_argument('--overwrite', action='store_true', default=False, help='Overwrites binary files -- mandatory for every machine swap. ')
     args = ps.parse_args()
-    print args
+    print(args)
     
     # get grids directory
     for gdname in ['grids', 'grids_ABS']:
@@ -38,7 +38,7 @@ def main():
                 # define name of the binary file
                 bin_synspec = synspec + '.npz'
                 if os.path.isfile(os.path.join(path, bin_synspec)) and not args.overwrite:
-                    print "File: %s exists." % bin_synspec
+                    print("File: %s exists." % bin_synspec)
                     if os.path.isfile(os.path.join(path, synspec)) and args.remove:
                         os.remove(os.path.join(path, synspec))       
                     continue

@@ -2338,7 +2338,7 @@ class Interface(object):
 
         # Keys
         cpr = self.comparisonList[0]
-        parlist = list(self.extract_parameters(cpr['parameters']['prim']).keys())
+        parlist = list(self.extract_parameters(cpr['parameters'][components[0]]).keys())
 
         # get all components for a given group
         rps = {p: {c: [] for c in components} for p in parlist} # radiative parameters

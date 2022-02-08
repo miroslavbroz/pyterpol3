@@ -16,7 +16,7 @@ def get_walker(db, nchain, nwalker, niter):
     :param niter:
     :return:
     """
-    rows = np.arange(niter)
+    rows = np.arange(niter, dtype=int)
     rows = nchain + nwalker*rows
     return db[rows]
 
@@ -58,7 +58,7 @@ def plot_walkers(block, niter, nwalker, indices=None, labels=None, savefig=True,
 
     # definethe plotting grid
     ncol = 3
-    nrow = npar / ncol
+    nrow = npar // ncol
     if npar % ncol > 0:
         nrow += 1
 
@@ -77,7 +77,7 @@ def plot_walkers(block, niter, nwalker, indices=None, labels=None, savefig=True,
 
         # set the position
         icol = j % ncol
-        irow = j / ncol
+        irow = j // ncol
         ax = fig.add_subplot(gs1[irow, icol])
 
         # plot the walkers

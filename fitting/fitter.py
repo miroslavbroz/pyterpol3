@@ -377,7 +377,7 @@ class Fitter(object):
         ofile.close()
 
         # run the sampler
-        for result in sampler.sample(pos, iterations=niter, storechain=False):
+        for result in sampler.sample(pos, iterations=niter, store=False):
             position = result[0]
             ofile = open(chain_file, 'a')
             for k in range(position.shape[0]):

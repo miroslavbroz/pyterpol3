@@ -377,11 +377,11 @@ class Fitter(object):
         ofile.close()
 
         # run the sampler
-        for result in sampler.sample(pos, iterations=niter, store=False):
-            position = result[0]
+        for state in sampler.sample(pos, iterations=niter, store=False):
+            coords = state.coords
             ofile = open(chain_file, 'a')
-            for k in range(position.shape[0]):
-                ofile.write("%d %s %f\n" % (k, " ".join(['%.12f' % i for i in position[k]]), result[1][k]))
+            for k in range(coords.shape[0]):
+                ofile.write("%d %s %f\n" % (k, " ".join(['%.12f' % i for i in coords[k]]), state.log_prob[k]))
             ofile.close()
 
     @staticmethod

@@ -1101,7 +1101,6 @@ class SyntheticGrid:
         # gets the parameter list
         # print order, props
         parlist = self.select_parameters(order=order,**props)
-        # print parlist
 
         # deselect reduntdant spectra
         parlist = self.deselect_exact(parlist, **props)
@@ -1149,7 +1148,8 @@ class SyntheticGrid:
         # print key, constraints, props
         # list eligible values for a given parameter
         elig_vals = np.array(self.get_available_values_fast(key, **constraints))
-        # print key, elig_vals
+        #print('key = ', key)
+        #print('elig_vals = ', elig_vals)
 
         # sorts the grid, from nearest to farthest
         ind = np.argsort(abs(elig_vals - v))

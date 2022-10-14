@@ -8,7 +8,7 @@ If you use this code, please cite the original reference:
   J. Nemravov\'a, P. Harmanec, M. Bro\v z, D. Vokrouhlick\'y, D. Mourard,
   C.A. Hummel, C.T. Bolton et al., \xi Tauri: a unique laboratory to study
   the dynamic interaction in a compact hierarchical quadruple system,
-  A&A, accepted.
+  A&A 594, A55.
   
 Also do not forget to cite papers describing the employed grid 
 of synthetic spectra.
@@ -21,11 +21,11 @@ but probably the simplest script (to get 4 synthetic spectra) is shown here:
 
 --
 
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-import pyterpol
+import pyterpol3
 
-sg = pyterpol.SyntheticGrid()
+sg = pyterpol3.SyntheticGrid()
 
 prim = dict(teff=10700., logg=4.08,  z=1.0)
 seco = dict(teff=10480., logg=4.01,  z=1.0)
@@ -51,4 +51,10 @@ A: They have to be downloaded and converted. For example, the PHOENIX grid at:
    ftp://phoenix.astro.physik.uni-goettingen.de/v2.0/HiResFITS/PHOENIX-ACES-AGSS-COND-2011/Z-0.0/
    and then use a script grid_ABS/ready_phoenix.py.
 
+Q: How to add new grid?
+
+A: Edit synthetic/defaults.py; if the grid is unique, e.g., with step = 0.05 A,
+   use the mode keyword:
+
+   sg = pyterpol3.SyntheticGrid(mode='POWR')
 

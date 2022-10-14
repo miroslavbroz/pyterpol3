@@ -17,6 +17,7 @@ grid_files = dict(
         'BSTAR',
         'POLLUX',
         'AMBRE',
+        'POWR',
         ],
     directories=[
         ['OSTAR_Z_0.5', 'OSTAR_Z_1.0', 'OSTAR_Z_2.0', 'BSTAR_Z_0.5', 'BSTAR_Z_1.0', 'BSTAR_Z_2.0', 'POLLUX_Z_1.0', 'AMBRE_Z_1.0'],
@@ -24,8 +25,10 @@ grid_files = dict(
         ['BSTAR_Z_0.5', 'BSTAR_Z_1.0', 'BSTAR_Z_2.0'],
         ['POLLUX_Z_1.0'],
         ['AMBRE_Z_1.0'],
+        ['POWR_Z_1.0'],
         ],
     columns=[
+        ['FILENAME', 'TEFF', 'LOGG', 'Z'],
         ['FILENAME', 'TEFF', 'LOGG', 'Z'],
         ['FILENAME', 'TEFF', 'LOGG', 'Z'],
         ['FILENAME', 'TEFF', 'LOGG', 'Z'],
@@ -37,7 +40,8 @@ grid_files = dict(
         ['OSTAR', 'OSTAR', 'OSTAR'],
         ['BSTAR', 'BSTAR', 'BSTAR'],
         ['POLLUX'],
-        ['AMBRE']
+        ['AMBRE'],
+        ['POWR'],
         ]
 )
 
